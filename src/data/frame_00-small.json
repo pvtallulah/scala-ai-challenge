@@ -1,0 +1,21 @@
+{
+  "frame_id": 0,
+  "points": [[-58.457, -61.269, 2.881]],
+  "cuboids": [
+    {
+      "uuid": "2c4dbdea-845e-4d29-8a94-9c86feb536fe",
+      "label": "Car",
+      "yaw": 2.3803062137948943,
+      "stationary": true,
+      "camera_used": 1,
+      "position.x": 20.759,
+      "position.y": 31.401,
+      "position.z": 0.591,
+      "dimensions.x": 1.867,
+      "dimensions.y": 4.629,
+      "dimensions.z": 1.673,
+      "cuboids.sibling_id": "-",
+      "cuboids.sensor_id": -1
+    }
+  ]
+}
