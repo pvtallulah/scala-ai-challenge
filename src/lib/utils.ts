@@ -7,13 +7,17 @@ export const getColorFromZ = (z: number) => {
   const normalizedZ = (clampedZ - minZ) / (maxZ - minZ);
 
   const gradientColors = [
-    new THREE.Color("#0000FF"),
-    new THREE.Color("#00FFFF"),
-    new THREE.Color("#00FF00"),
-    new THREE.Color("#FFFF00"),
-    new THREE.Color("#FFA500"),
-    new THREE.Color("#FF4500"),
     new THREE.Color("#FF0000"),
+    new THREE.Color("#FF7F00"),
+    new THREE.Color("#FFFF00"),
+    new THREE.Color("#7FFF00"),
+    new THREE.Color("#00FF00"),
+    new THREE.Color("#00FF7F"),
+    new THREE.Color("#00FFFF"),
+    new THREE.Color("#007FFF"),
+    new THREE.Color("#0000FF"),
+    new THREE.Color("#7F00FF"),
+    new THREE.Color("#FF00FF"),
   ];
 
   const step = 1 / (gradientColors.length - 1);
