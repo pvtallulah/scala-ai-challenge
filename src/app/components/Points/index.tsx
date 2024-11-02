@@ -4,12 +4,12 @@ import { useEffect, useRef } from "react";
 import { getColorFromZ } from "@/lib";
 
 type Params = {
-  points: PointType[];
+  currentFramePoints: PointType[];
 };
 
-export const Points = ({ points }: Params) => {
+export const Points = ({ currentFramePoints }: Params) => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
-  const numPoints = points.length;
+  const numPoints = currentFramePoints.length;
 
   useEffect(() => {
     if (!meshRef.current) return;
@@ -18,9 +18,8 @@ export const Points = ({ points }: Params) => {
     const sphere = new THREE.Object3D();
 
     for (let i = 0; i < numPoints; i++) {
-      const [x, y, z] = points[i];
+      const [x, y, z] = currentFramePoints[i];
       sphere.position.set(y, z, x);
-
       sphere.updateMatrix();
       meshRef.current.setMatrixAt(i, sphere.matrix);
 
@@ -30,7 +29,7 @@ export const Points = ({ points }: Params) => {
 
     const colorAttribute = new THREE.InstancedBufferAttribute(colorArray, 3);
     meshRef.current.geometry.setAttribute("color", colorAttribute);
-  }, [points, numPoints]);
+  }, [currentFramePoints, numPoints]);
 
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, numPoints]}>

@@ -7,6 +7,8 @@ type FrameContextType = {
   currentFrameIndex: number;
   setCurrentFrameIndex: React.Dispatch<React.SetStateAction<number>>;
   getCurrentFrameData: () => FramesData | null;
+  getNextFrameData: () => FramesData | null;
+  loading: boolean;
 };
 
 const FrameContext = createContext<FrameContextType | undefined>(undefined);
@@ -23,8 +25,8 @@ export const FrameProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [frames, setFrames] = useState<FramesData[]>([]);
-
   const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadFrames = async () => {
@@ -38,6 +40,8 @@ export const FrameProvider: React.FC<{ children: React.ReactNode }> = ({
         setFrames(loadedFrames);
       } catch (error) {
         console.error("Error loading frames:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -48,6 +52,10 @@ export const FrameProvider: React.FC<{ children: React.ReactNode }> = ({
     return frames[currentFrameIndex] || null;
   };
 
+  const getNextFrameData = () => {
+    return frames[currentFrameIndex + 1] || null;
+  };
+
   return (
     <FrameContext.Provider
       value={{
@@ -55,6 +63,8 @@ export const FrameProvider: React.FC<{ children: React.ReactNode }> = ({
         currentFrameIndex,
         setCurrentFrameIndex,
         getCurrentFrameData,
+        getNextFrameData,
+        loading,
       }}
     >
       {children}

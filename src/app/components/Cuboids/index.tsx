@@ -1,18 +1,20 @@
 import * as THREE from "three";
 import { Cuboid as CuboidType } from "@/types";
 import { useEffect, useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
 import { getColorFromZ } from "@/lib";
 import { Tooltip } from "../Tooltip";
 
 type Params = {
-  cuboids: CuboidType[];
+  currentFrameCuboids: CuboidType[];
+  nextFrameCuboids: CuboidType[] | null;
 };
 
-export const Cuboids = ({ cuboids }: Params) => {
+export const Cuboids = ({ currentFrameCuboids, nextFrameCuboids }: Params) => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const [hoveredCuboid, setHoveredCuboid] = useState<CuboidType | null>(null);
   const [isHoveringTooltip, setIsHoveringTooltip] = useState(false);
-  const numCuboids = cuboids.length;
+  const numCuboids = currentFrameCuboids.length;
 
   useEffect(() => {
     if (!meshRef.current) return;
@@ -21,7 +23,7 @@ export const Cuboids = ({ cuboids }: Params) => {
     const cube = new THREE.Object3D();
 
     for (let i = 0; i < numCuboids; i++) {
-      const cuboid = cuboids[i];
+      const cuboid = currentFrameCuboids[i];
 
       const x = cuboid["position.x"];
       const y = cuboid["position.y"];
@@ -45,7 +47,47 @@ export const Cuboids = ({ cuboids }: Params) => {
     const colorAttribute = new THREE.InstancedBufferAttribute(colorArray, 3);
     meshRef.current.geometry.setAttribute("color", colorAttribute);
     meshRef.current.instanceMatrix.needsUpdate = true;
-  }, [cuboids, numCuboids]);
+  }, [currentFrameCuboids, numCuboids]);
+
+  useFrame((state, delta) => {
+    if (!meshRef.current || !nextFrameCuboids) return;
+
+    for (let i = 0; i < numCuboids; i++) {
+      const currentCuboid = currentFrameCuboids[i];
+      if (currentCuboid.stationary) continue;
+      const nextCuboid = nextFrameCuboids.find(
+        (c) => c.uuid === currentCuboid.uuid
+      );
+      if (nextCuboid) {
+        const currentPos = new THREE.Vector3(
+          currentCuboid["position.y"],
+          currentCuboid["position.z"],
+          currentCuboid["position.x"]
+        );
+        const nextPos = new THREE.Vector3(
+          nextCuboid["position.y"],
+          nextCuboid["position.z"],
+          nextCuboid["position.x"]
+        );
+
+        const interpolatedPos = currentPos.lerp(nextPos, delta);
+
+        const cube = new THREE.Object3D();
+        cube.position.copy(interpolatedPos);
+        cube.rotation.set(0, nextCuboid["yaw"], 0);
+        cube.scale.set(
+          nextCuboid["dimensions.y"],
+          nextCuboid["dimensions.z"],
+          nextCuboid["dimensions.x"]
+        );
+        cube.updateMatrix();
+
+        meshRef.current.setMatrixAt(i, cube.matrix);
+      }
+    }
+
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  });
 
   const handlePointerOver = (cuboid: CuboidType) => {
     if (!isHoveringTooltip) {
@@ -64,14 +106,16 @@ export const Cuboids = ({ cuboids }: Params) => {
       <instancedMesh
         ref={meshRef}
         args={[undefined, undefined, numCuboids]}
-        onPointerOver={(event) => handlePointerOver(cuboids[event.instanceId!])}
+        onPointerOver={(event) =>
+          handlePointerOver(currentFrameCuboids[event.instanceId!])
+        }
         onPointerOut={handlePointerOut}
       >
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial vertexColors opacity={0.45} transparent />
       </instancedMesh>
 
-      {cuboids.map((cuboid, index) => {
+      {currentFrameCuboids.map((cuboid, index) => {
         const x = cuboid["position.x"];
         const y = cuboid["position.y"];
         const z = cuboid["position.z"];
