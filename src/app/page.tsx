@@ -4,10 +4,11 @@ import { Canvas } from "@react-three/fiber";
 import useSWR from "swr";
 import { fetcher } from "@/lib";
 import { FramesData } from "@/types";
-import { Point } from "./components/Points";
+import { Points } from "./components/Points";
 import { extend } from "@react-three/fiber";
 import { OrbitControls, TransformControls } from "three-stdlib";
 import { CameraController } from "./components/CameraController";
+import { Cuboids } from "./components/Cuboids";
 extend({ OrbitControls, TransformControls });
 
 export default function Home() {
@@ -26,7 +27,8 @@ export default function Home() {
         decay={0}
         intensity={Math.PI}
       />
-      <Point points={data?.points || []} />
+      <Points points={data?.points || []} />
+      <Cuboids cuboids={data?.cuboids || []} />
     </Canvas>
   );
 }
