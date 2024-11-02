@@ -1,11 +1,6 @@
 import * as THREE from "three";
-import { Point as PointType } from "@/types";
 
-type Params = {
-  point: PointType;
-};
-
-function getColorFromZ(z: number): THREE.Color {
+export const getColorFromZ = (z: number) => {
   const minZ = -10;
   const maxZ = 50;
   const clampedZ = Math.max(minZ, Math.min(z, maxZ));
@@ -17,6 +12,7 @@ function getColorFromZ(z: number): THREE.Color {
     new THREE.Color("#00FF00"),
     new THREE.Color("#FFFF00"),
     new THREE.Color("#FFA500"),
+    new THREE.Color("#FF4500"),
     new THREE.Color("#FF0000"),
   ];
 
@@ -27,17 +23,7 @@ function getColorFromZ(z: number): THREE.Color {
   if (index >= gradientColors.length - 1) {
     return gradientColors[gradientColors.length - 1];
   }
-  const result = gradientColors[index]
+  return gradientColors[index]
     .clone()
     .lerp(gradientColors[index + 1], remainder);
-  return result;
-}
-
-export function Point({ point }: Params) {
-  return (
-    <mesh visible position={point}>
-      <sphereGeometry args={[0.2, 32, 32]} />
-      <meshBasicMaterial color={getColorFromZ(point[2])} />
-    </mesh>
-  );
-}
+};
