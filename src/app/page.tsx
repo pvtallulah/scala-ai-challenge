@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import useSWR from "swr";
 import { fetcher } from "@/lib";
 import { FramesData } from "@/types";
-import { Point } from "./components/Point";
+import { Point } from "./components/Points";
 import { extend } from "@react-three/fiber";
 import { OrbitControls, TransformControls } from "three-stdlib";
 import { CameraController } from "./components/CameraController";
@@ -15,7 +15,6 @@ export default function Home() {
 
   if (isLoading) return <div className="text-white">Loading...</div>;
   if (error) return <div className="text-red-500">Failed to load data</div>;
-
   return (
     <Canvas>
       <ambientLight intensity={Math.PI / 2} />
@@ -27,9 +26,7 @@ export default function Home() {
         decay={0}
         intensity={Math.PI}
       />
-      {data?.points?.map((point, index) => (
-        <Point key={index} point={point} />
-      ))}
+      <Point points={data?.points || []} />
     </Canvas>
   );
 }
