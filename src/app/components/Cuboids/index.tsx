@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import { Cuboid as CuboidType } from "@/types";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getColorFromZ } from "@/lib";
+import { Tooltip } from "../Tooltip";
 
 type Params = {
   cuboids: CuboidType[];
@@ -9,6 +10,8 @@ type Params = {
 
 export const Cuboids = ({ cuboids }: Params) => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
+  const [hoveredCuboid, setHoveredCuboid] = useState<CuboidType | null>(null);
+  const [isHoveringTooltip, setIsHoveringTooltip] = useState(false);
   const numCuboids = cuboids.length;
 
   useEffect(() => {
@@ -44,9 +47,26 @@ export const Cuboids = ({ cuboids }: Params) => {
     meshRef.current.instanceMatrix.needsUpdate = true;
   }, [cuboids, numCuboids]);
 
+  const handlePointerOver = (cuboid: CuboidType) => {
+    if (!isHoveringTooltip) {
+      setHoveredCuboid(cuboid);
+    }
+  };
+
+  const handlePointerOut = () => {
+    if (!isHoveringTooltip) {
+      setHoveredCuboid(null);
+    }
+  };
+
   return (
     <>
-      <instancedMesh ref={meshRef} args={[undefined, undefined, numCuboids]}>
+      <instancedMesh
+        ref={meshRef}
+        args={[undefined, undefined, numCuboids]}
+        onPointerOver={(event) => handlePointerOver(cuboids[event.instanceId!])}
+        onPointerOut={handlePointerOut}
+      >
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial vertexColors opacity={0.45} transparent />
       </instancedMesh>
@@ -75,6 +95,12 @@ export const Cuboids = ({ cuboids }: Params) => {
           </lineSegments>
         );
       })}
+      {hoveredCuboid && (
+        <Tooltip
+          hoveredCuboid={hoveredCuboid}
+          setIsHoveringTooltip={setIsHoveringTooltip}
+        />
+      )}
     </>
   );
 };
