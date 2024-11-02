@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Point as PointType } from "@/types";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { getColorFromZ } from "@/lib";
 
@@ -8,7 +8,7 @@ type Params = {
   points: PointType[];
 };
 
-export function Point({ points }: Params) {
+export const Points = ({ points }: Params) => {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const numPoints = points.length;
 
@@ -27,11 +27,17 @@ export function Point({ points }: Params) {
       color.toArray(colorArray, i * 3);
     }
 
-    meshRef.current.geometry.setAttribute(
-      "color",
-      new THREE.InstancedBufferAttribute(colorArray, 3)
-    );
+    const colorAttribute = new THREE.InstancedBufferAttribute(colorArray, 3);
+    meshRef.current.geometry.setAttribute("color", colorAttribute);
+    meshRef.current.geometry.attributes.color.needsUpdate = true;
   }, [points, numPoints]);
+
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.instanceMatrix.needsUpdate = true;
+    }
+    console.log("Points updateds");
+  }, [points]);
 
   useFrame(({ camera }) => {
     if (!meshRef.current) return;
@@ -67,4 +73,4 @@ export function Point({ points }: Params) {
       <meshBasicMaterial vertexColors />
     </instancedMesh>
   );
-}
+};
