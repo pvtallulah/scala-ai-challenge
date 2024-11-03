@@ -1,8 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Getting Started
 
-## Getting Started
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app@14`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-First, run the development server:
+1. First, install the dependencies:
+   ```bash
+   npm i
+   ```
+2. Copy .env.example to .env.local and set the environment variables.
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   pwsh
+
+   ```pwsh
+   Copy-Item ".env.examle" -Destination ".env"
+   ```
+
+3. Run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +32,48 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+###### Frame Data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+On development mode, `npm run dev` this app relays on local data to load the 50 frames. You can get all the data [here](https://drive.google.com/file/d/1Gem2PZmAcAaBp-g_EkIcXJVp9DXd9lko/view?usp=sharing). Place the `data` folder in `src/data`. If you prefere to load the data remotel, be sure to set the `USE_LOCAL_DATA` falg in `.env` to `false`
 
-## Learn More
+## Resources
 
-To learn more about Next.js, take a look at the following resources:
+https://r3f.docs.pmnd.rs/getting-started/introduction react three fiber documentation.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+https://drei.docs.pmnd.rs/misc/htm to create the tool tip.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+https://discoverthreejs.com/tips-and-tricks/ performance & research.
 
-## Deploy on Vercel
+https://discourse.threejs.org/t/how-can-i-optimise-my-three-js-rendering/42251 performance & research.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+https://threejsfundamentals.org/threejs/lessons/threejs-tips.html performance & research.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+https://chatgpt.com/ initial project bootstrap.
+
+https://google.com/ a lot, for everything.
+
+### Known Issues
+
+- The tooltip is not working properly on mobile devices.
+- The tooltip is not workine as expected on desktop, when you hover the tooltip this is hidden. That is not the intended functionality.
+- The controls are set on a fixed position, this is not the best approach for mobile devices. Or different screen sizes
+- For some reason the points, on animation, are not being updated correctly. So as a workaround, I'm removing the points and adding them again once the user stop the animation. This is not the best approach, but it's working for now.
+
+### Roadmap
+
+- Improve performance.
+- Fix the tooltip for desktop.
+- Create a better approach for the controls.
+- Add testing.
+
+### Oddities
+
+- For some reason, im new to r3f, is like the axis coords from the json dont match the axis coords from the r3f. So I had to change the order of the coords to make it work.
+  eg:
+  ```js
+  sphere.position.set(y, z, x); // x, y, z
+  ```
+
+#### Authro
+
+maikinahara[at]gmail[dot]com
