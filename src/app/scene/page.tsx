@@ -49,6 +49,7 @@ const Scene = () => {
       <Cuboids
         currentFrameCuboids={data?.cuboids || []}
         nextFrameCuboids={nextFrame?.cuboids || null}
+        isPlaying={isPlaying}
       />
       <Control
         handlePlayStop={handlePlayStop}
