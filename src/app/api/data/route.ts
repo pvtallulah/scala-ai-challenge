@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const url = new URL(req.url);
   const frame = url.searchParams.get("frame") || "00";
 
-  if (config.env === "development") {
+  if (config.env === "development" && config.useLocalData) {
     try {
       const filePath = `${process.cwd()}/src/data/frame_${frame.padStart(
         2,
