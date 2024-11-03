@@ -1,6 +1,7 @@
-import { config } from "@/config";
 import { NextRequest, NextResponse } from "next/server";
 import { promises as fs } from "fs";
+
+import { config } from "@/config";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);

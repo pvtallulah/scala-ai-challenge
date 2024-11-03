@@ -1,6 +1,7 @@
-import * as THREE from "three";
-import { Point as PointType } from "@/types";
 import { useEffect, useRef } from "react";
+import * as THREE from "three";
+
+import { Point as PointType } from "@/types";
 import { getColorFromZ } from "@/lib";
 
 type Params = {

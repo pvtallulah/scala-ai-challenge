@@ -1,7 +1,8 @@
-import * as THREE from "three";
-import { Cuboid as CuboidType } from "@/types";
 import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
+
+import { Cuboid as CuboidType } from "@/types";
 import { getColorFromZ } from "@/lib";
 import { Tooltip } from "../Tooltip";
 

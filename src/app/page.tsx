@@ -1,64 +1,33 @@
 "use client";
-import { Canvas } from "@react-three/fiber";
-import { Points } from "./components/Points";
-import { Cuboids } from "./components/Cuboids";
-import { OrbitControls } from "@react-three/drei";
-import { Control } from "./components/Controls";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 import { useFrameContext } from "@/context/FrameContext";
-import { useState } from "react";
+import { ProgressBar } from "@/app/components/ProgressBar";
 
-export default function Home() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const {
-    currentFrameIndex,
-    setCurrentFrameIndex,
-    getCurrentFrameData,
-    getNextFrameData,
-    loading,
-  } = useFrameContext();
-  const totalFrames = 50;
+export default function Loading() {
+  const router = useRouter();
+  const { progress } = useFrameContext();
 
-  const handleStep = (step: number) => {
-    setCurrentFrameIndex((prev) => {
-      const newFrameIndex = prev + step;
-      return newFrameIndex >= 0 && newFrameIndex < totalFrames
-        ? newFrameIndex
-        : prev;
-    });
-  };
-
-  if (loading) return <div className="text-white">Loading frames...</div>;
-
-  const data = getCurrentFrameData();
-  const nextFrame = getNextFrameData();
-
-  const handleReplay = () => {
-    setCurrentFrameIndex(0);
-  };
-  const handlePlayStop = () => {
-    setIsPlaying((prev) => !prev);
-  };
-  if (!data) return <div className="text-white">No frame data available</div>;
-
+  useEffect(() => {
+    if (progress === 100) {
+      router.push("/scene");
+    }
+  }, [progress, router]);
   return (
-    <Canvas camera={{ position: [5, 0, 0], near: 0.025 }}>
-      <ambientLight intensity={0.5} />
-      <OrbitControls />
-      {!isPlaying && <Points currentFramePoints={data?.points || []} />}
-      <Cuboids
-        currentFrameCuboids={data?.cuboids || []}
-        nextFrameCuboids={nextFrame?.cuboids || null}
-      />
-      <Control
-        handlePlayStop={handlePlayStop}
-        handleStep={handleStep}
-        currentFrame={currentFrameIndex}
-        totalFrames={totalFrames}
-        handleReplay={handleReplay}
-        isPlaying={isPlaying}
-      />
-      <gridHelper args={[50]} />
-      <axesHelper args={[50]} />
-    </Canvas>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+      <div className="w-11/12 flex flex-col items-center max-w-2xl bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 className="text-center text-2xl font-semibold text-f5f5f5 mb-4">
+          Loading Frames...
+        </h2>
+        <ProgressBar />
+        <p className="text-center mt-2 text-f5f5f5">{progress}%</p>
+        {progress === 100 && (
+          <div className="text-center text-green-500 mt-4">
+            All frames loaded!
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

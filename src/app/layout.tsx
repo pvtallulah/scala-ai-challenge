@@ -1,7 +1,8 @@
 "use client";
 import localFont from "next/font/local";
-import "./globals.css";
+
 import { FrameProvider } from "@/context/FrameContext";
+import "./globals.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
