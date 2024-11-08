@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 import { Point as PointType } from "@/types";
@@ -9,33 +9,43 @@ type Params = {
 };
 
 export const Points = ({ currentFramePoints }: Params) => {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const meshRef = useRef<THREE.Points>(null);
   const numPoints = currentFramePoints.length;
+  console.time("render");
+
+  // Memoize colors to avoid recalculation on every render
+  const colors = useMemo(() => {
+    console.time("colorCalculation");
+    const colorArray = new Float32Array(
+      currentFramePoints.flatMap(([x]) => {
+        const color = getColorFromZ(x);
+        return [color.r, color.g, color.b];
+      })
+    );
+    console.timeEnd("colorCalculation");
+    return colorArray;
+  }, []);
 
   useEffect(() => {
     if (!meshRef.current) return;
 
-    const colorArray = new Float32Array(numPoints * 3);
-    const sphere = new THREE.Object3D();
+    const points = new Float32Array(currentFramePoints.flat());
 
-    for (let i = 0; i < numPoints; i++) {
-      const [x, y, z] = currentFramePoints[i];
-      sphere.position.set(y, z, x);
-      sphere.updateMatrix();
-      meshRef.current.setMatrixAt(i, sphere.matrix);
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(points, 3)
+    );
+    geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
 
-      const color = getColorFromZ(z);
-      color.toArray(colorArray, i * 3);
-    }
+    meshRef.current.geometry = geometry;
 
-    const colorAttribute = new THREE.InstancedBufferAttribute(colorArray, 3);
-    meshRef.current.geometry.setAttribute("color", colorAttribute);
+    console.timeEnd("render");
   }, [currentFramePoints, numPoints]);
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, numPoints]}>
-      <sphereGeometry args={[0.03, 4, 4]} />
-      <meshBasicMaterial vertexColors />
-    </instancedMesh>
+    <points ref={meshRef}>
+      <pointsMaterial attach="material" size={0.05} vertexColors />
+    </points>
   );
 };

@@ -32,21 +32,22 @@ export const MovingCuboids = ({
       );
       if (nextCuboid) {
         const currentPos = new THREE.Vector3(
+          currentCuboid["position.x"],
           currentCuboid["position.y"],
-          currentCuboid["position.z"],
-          currentCuboid["position.x"]
+          currentCuboid["position.z"]
         );
         const nextPos = new THREE.Vector3(
+          nextCuboid["position.x"],
           nextCuboid["position.y"],
-          nextCuboid["position.z"],
-          nextCuboid["position.x"]
+          nextCuboid["position.z"]
         );
 
         const interpolatedPos = currentPos.lerp(nextPos, delta);
 
         const cube = new THREE.Object3D();
         cube.position.copy(interpolatedPos);
-        cube.rotation.set(0, nextCuboid["yaw"], 0);
+        const yaw = nextCuboid["yaw"];
+        cube.rotation.set(0, 0, -yaw);
         cube.scale.set(
           nextCuboid["dimensions.y"],
           nextCuboid["dimensions.z"],
@@ -97,8 +98,8 @@ export const MovingCuboids = ({
         return (
           <lineSegments
             key={cuboid.uuid || index}
-            position={[y, z, x]}
-            rotation={[0, yaw, 0]}
+            position={[x, y, z]}
+            rotation={[0, 0, -yaw]}
             scale={[dimY, dimZ, dimX]}
           >
             <edgesGeometry

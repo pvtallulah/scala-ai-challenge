@@ -29,8 +29,8 @@ export const StaticCuboids = ({ staticCuboids }: StaticCuboidsProps) => {
       const dimZ = cuboid["dimensions.z"];
       const yaw = cuboid["yaw"];
 
-      cube.position.set(y, z, x);
-      cube.rotation.set(0, yaw, 0);
+      cube.position.set(x, y, z);
+      cube.rotation.set(0, 0, -yaw);
       cube.scale.set(dimY, dimZ, dimX);
       cube.updateMatrix();
 
@@ -78,8 +78,8 @@ export const StaticCuboids = ({ staticCuboids }: StaticCuboidsProps) => {
         return (
           <lineSegments
             key={cuboid.uuid || index}
-            position={[y, z, x]}
-            rotation={[0, yaw, 0]}
+            position={[x, y, z]}
+            rotation={[0, 0, -yaw]}
             scale={[dimY, dimZ, dimX]}
           >
             <edgesGeometry

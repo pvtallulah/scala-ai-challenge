@@ -1,4 +1,5 @@
 "use client";
+import * as THREE from "three";
 import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -36,21 +37,31 @@ const Scene = () => {
   const handleReplay = () => {
     setCurrentFrameIndex(0);
   };
+
   const handlePlayStop = () => {
     setIsPlaying((prev) => !prev);
   };
   if (!data) return <div className="text-white">No frame data available</div>;
-
   return (
-    <Canvas camera={{ position: [5, 0, 0], near: 0.025 }}>
+    <Canvas
+      orthographic={false}
+      camera={{
+        zoom: 1,
+        rotation: new THREE.Euler(0, Math.PI / 2, Math.PI / 2),
+        position: [10, 10, 15],
+        up: [0, 0, 1],
+      }}
+    >
       <ambientLight intensity={0.5} />
-      <OrbitControls />
-      {!isPlaying && <Points currentFramePoints={data?.points || []} />}
+      <OrbitControls rotation={[Math.PI / 2, 0, Math.PI / 2]} />
+
+      <Points currentFramePoints={data?.points || []} />
       <Cuboids
         currentFrameCuboids={data?.cuboids || []}
         nextFrameCuboids={nextFrame?.cuboids || null}
         isPlaying={isPlaying}
       />
+
       <Control
         handlePlayStop={handlePlayStop}
         handleStep={handleStep}
@@ -59,8 +70,10 @@ const Scene = () => {
         handleReplay={handleReplay}
         isPlaying={isPlaying}
       />
-      <gridHelper args={[50]} />
-      <axesHelper args={[50]} />
+      <group rotation={new THREE.Euler(0, Math.PI / 2, Math.PI / 2)}>
+        <axesHelper args={[50]} />
+        <gridHelper args={[50]} />
+      </group>
     </Canvas>
   );
 };

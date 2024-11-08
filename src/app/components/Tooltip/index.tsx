@@ -14,7 +14,7 @@ export const Tooltip = ({ hoveredCuboid }: TooltipProps) => {
 
   return (
     <Html
-      position={[y, z, x]}
+      position={[x + 5, y + 5, z + 5]}
       as="div"
       style={{
         backgroundColor: "#2f2f2f",
